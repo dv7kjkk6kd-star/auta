@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Garáž — veteráni a supersporty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08080a;--panel:#131317;--line:#2a2a30;--ink:#f6f3ec;--mute:#a09c93;--acc:#ff5a1f;--disp:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;--body:Manrope,system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden}
+img,video{display:block;max-width:100%}
+h1,h2,h3,h4{font-family:var(--disp);font-weight:900;text-transform:uppercase;line-height:.9;margin:0;letter-spacing:.005em}
+button{font:inherit;color:inherit;cursor:pointer}
+body::after{content:"";position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+nav{position:fixed;inset:0 0 auto 0;z-index:20;display:flex;gap:18px;align-items:center;height:58px;padding:0 22px;background:linear-gradient(#08080af5,#08080a99);backdrop-filter:blur(10px);border-bottom:1px solid #ffffff12}
+nav .logo{font-family:var(--disp);font-weight:900;font-size:26px;letter-spacing:.14em;background:none;border:0;flex:none;padding:0}
+nav .logo b{color:var(--tc,var(--acc));transition:color .5s}
+#tabs{display:flex;gap:6px;margin-left:auto;overflow-x:auto;scrollbar-width:none;padding:4px 0}
+#tabs::-webkit-scrollbar{display:none}
+#tabs button{background:none;border:1px solid transparent;border-radius:99px;padding:7px 13px;font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#bdb9b0;white-space:nowrap;transition:all .3s}
+#tabs button:hover{color:#fff;border-color:#fff3}
+#tabs button.on{color:#000;background:var(--tc,var(--acc));border-color:var(--tc,var(--acc))}
+
+.deck{display:flex;height:100svh;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none}
+.deck::-webkit-scrollbar{display:none}
+.pn{--c:var(--acc);flex:0 0 100vw;width:100vw;height:100svh;overflow-y:auto;overflow-x:hidden;scroll-snap-align:start;scroll-snap-stop:always;position:relative;padding:76px 0 66px}
+.pn::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 70% at 100% 0%,color-mix(in srgb,var(--c) 26%,#0000),#0000 70%),radial-gradient(50% 60% at 0% 100%,color-mix(in srgb,var(--c) 14%,#0000),#0000 70%);pointer-events:none}
+.ghost{position:absolute;left:0;bottom:0;white-space:nowrap;overflow:hidden;height:30vh;font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:38vh;line-height:.8;color:transparent;-webkit-text-stroke:1.5px color-mix(in srgb,var(--c) 30%,#0000);pointer-events:none;animation:gh 60s linear infinite;opacity:.55}
+@keyframes gh{to{transform:translateX(-50%)}}
+.wrap{max-width:1400px;margin:0 auto;padding:0 30px;position:relative}
+
+/* intro */
+.intro{padding:0;display:flex;align-items:flex-end;overflow:hidden}
+.intro .bg{position:absolute;inset:0}
+.intro .bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.4s ease}
+.intro .bg img.on{opacity:1;animation:drift 9s linear forwards}
+@keyframes drift{from{transform:scale(1.04)}to{transform:scale(1.16) translate(-1.5%,-1%)}}
+.intro canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;mix-blend-mode:screen;opacity:.7}
+.intro::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#08080a88 0%,#08080a22 30%,#08080af2 80%,#08080a 100%)}
+.intro .in{position:relative;z-index:2;width:100%;padding-bottom:90px}
+.intro h1{font-size:clamp(70px,14vw,210px)}
+.intro h1 span{display:block;color:transparent;-webkit-text-stroke:2px var(--ink)}
+.intro h1 i{font-style:normal;display:inline-block;opacity:0;transform:translateY(60%) skewY(6deg);animation:rise .9s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes rise{from{opacity:0;transform:translateY(60%) skewY(6deg)}to{opacity:1;transform:none}}
+.intro p{max-width:640px;color:#e2dfd7;margin:14px 0 22px;font-size:19px}
+.tiles{display:flex;flex-wrap:wrap;gap:10px;max-width:1000px}
+.tiles button{background:#ffffff10;border:1px solid #ffffff26;border-bottom:4px solid var(--c);border-radius:6px;padding:10px 18px;font-family:var(--disp);font-weight:800;font-size:24px;letter-spacing:.06em;text-transform:uppercase;transition:all .25s}
+.tiles button:hover{background:var(--c);color:#000;transform:translateY(-4px) rotate(-1.5deg)}
+.kick{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--c);font-weight:800;margin-bottom:8px}
+
+/* brand layout */
+.bl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:48px;align-items:start}
+.left{height:calc(100svh - 150px);max-height:740px;min-height:420px;aspect-ratio:9/16;position:relative}
+.bh h2{font-size:clamp(60px,7.6vw,124px);margin-left:-4px}
+.pn.act .bh h2{animation:rise .8s cubic-bezier(.2,.8,.2,1) both}
+.claim{font-family:var(--disp);font-weight:800;font-size:clamp(24px,2.5vw,36px);text-transform:uppercase;color:var(--c);line-height:1;margin:6px 0 18px}
+.st{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.st button{background:#ffffff0d;border:1px solid var(--line);border-radius:99px;padding:9px 20px;font-weight:800;font-size:14px;letter-spacing:.1em;text-transform:uppercase;transition:all .25s}
+.st button:hover{border-color:var(--c)}
+.st button.on{background:var(--c);border-color:var(--c);color:#000}
+.st button sup{font-size:10px;opacity:.7;margin-left:4px}
+.tab{display:none}
+.tab.on{display:block;animation:tabin .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes tabin{from{opacity:0;transform:translateY(18px)}}
+
+/* star tab */
+.star h3{font-size:clamp(40px,4.6vw,72px);margin-bottom:12px}
+.star p{color:#dcd8cf;margin:0 0 8px;font-size:17px;max-width:760px}
+.specs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;max-width:860px}
+.specs div{background:linear-gradient(160deg,color-mix(in srgb,var(--c) 18%,var(--panel)),var(--panel));border:1px solid var(--line);border-radius:10px;padding:14px 16px;transition:transform .3s,border-color .3s}
+.specs div:hover{transform:translateY(-4px) rotate(-1deg);border-color:var(--c)}
+.specs b{display:block;font-family:var(--disp);font-weight:900;font-size:clamp(34px,3.6vw,54px);line-height:1}
+.specs span{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:700}
+
+/* models tab */
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.chips button{background:none;border:1px solid var(--line);border-radius:6px;padding:5px 12px;font-family:var(--disp);font-weight:800;font-size:18px;letter-spacing:.04em;text-transform:uppercase;color:#cfccc4;position:relative;overflow:hidden;transition:all .25s}
+.chips button:hover{border-color:var(--c);color:#fff}
+.chips button.on{background:#fff;color:#000;border-color:#fff}
+.chips button.on::after{content:"";position:absolute;left:0;bottom:0;height:4px;width:0;background:var(--c);animation:fill var(--cyc,6s) linear forwards}
+.chips.hold button.on::after{animation-play-state:paused}
+.chips button .cam{font-size:11px;margin-left:5px;vertical-align:2px}
+.md{display:grid;grid-template-columns:minmax(200px,250px) minmax(0,1fr);gap:26px;align-items:center;background:linear-gradient(140deg,color-mix(in srgb,var(--c) 14%,var(--panel)),var(--panel) 60%);border:1px solid var(--line);border-radius:14px;padding:18px;max-width:900px}
+.md .vis{position:relative;aspect-ratio:1/1;border-radius:10px;overflow:hidden;background:#000}
+.md .vis img,.md .vis video{width:100%;height:100%;object-fit:cover;cursor:zoom-in;animation:kb 7s linear both}
+.badge{position:absolute;left:10px;top:10px;z-index:2;background:var(--c);color:#000;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:99px}
+.gauge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 55%,color-mix(in srgb,var(--c) 22%,#000),#050506 70%)}
+.gauge svg{position:absolute;inset:6%;width:88%;height:88%;transform:rotate(135deg)}
+.gauge circle{fill:none;stroke-width:7;stroke-linecap:round}
+.gauge .tr{stroke:#ffffff14}
+.gauge .ar{stroke:var(--c);filter:drop-shadow(0 0 8px var(--c));transition:stroke-dashoffset 1.3s cubic-bezier(.2,.8,.2,1)}
+.gauge .v{position:relative;text-align:center}
+.gauge .v b{display:block;font-family:var(--disp);font-weight:900;font-size:clamp(46px,5vw,70px);line-height:.9}
+.gauge .v span{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--c);font-weight:800}
+.md h4{font-size:clamp(36px,4vw,60px)}
+.md .tg{font-size:18px;color:#dcd8cf;margin:8px 0 14px;max-width:480px}
+.md dl{display:flex;gap:26px;margin:0;flex-wrap:wrap}
+.md dt{font-family:var(--disp);font-weight:900;font-size:clamp(30px,3vw,44px);line-height:1}
+.md dd{margin:0;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:700}
+
+/* own tab */
+.own{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px;max-width:900px}
+.own figure{margin:0;aspect-ratio:4/5;position:relative;overflow:hidden;border-radius:10px;background:#000;cursor:zoom-in;border:1px solid var(--line);transition:transform .3s,border-color .3s}
+.own figure:nth-child(odd):hover{transform:scale(1.04) rotate(-1.5deg);border-color:var(--c);z-index:2}
+.own figure:nth-child(even):hover{transform:scale(1.04) rotate(1.5deg);border-color:var(--c);z-index:2}
+.own img,.own video{width:100%;height:100%;object-fit:cover}
+.own figcaption{position:absolute;inset:auto 0 0 0;padding:26px 10px 8px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;background:linear-gradient(#0000,#000d);line-height:1.25}
+.own figcaption small{display:block;font-weight:500;color:#cfccc4;text-transform:none}
+.own figure.v::before{content:"▶ VIDEO";position:absolute;z-index:2;left:8px;top:8px;background:#000a;border-radius:99px;font-size:10px;font-weight:800;letter-spacing:.1em;padding:3px 8px}
+.none{font-size:18px;color:#dcd8cf;border-left:4px solid var(--c);padding:6px 0 6px 16px;max-width:560px}
+
+/* spot */
+.spot{position:absolute;inset:0;background:#000;overflow:hidden;border-radius:22px;isolation:isolate;box-shadow:0 0 0 1px #ffffff22,0 30px 80px -20px color-mix(in srgb,var(--c) 60%,#0000);transform:rotate(-1.2deg);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.spot:hover{transform:rotate(0) scale(1.01)}
+.spot .sl{position:absolute;inset:0;opacity:0;transition:opacity .6s ease}
+.spot .sl.on{opacity:1}
+.spot .sl img{width:100%;height:100%;object-fit:cover}
+.spot .sl.on img{animation:kb var(--dur,4s) linear forwards}
+.spot .sl:nth-child(odd).on img{animation-name:kb2}
+@keyframes kb{from{transform:scale(1.02)}to{transform:scale(1.2) translate(2%,-2%)}}
+@keyframes kb2{from{transform:scale(1.22) translate(-2%,1%)}to{transform:scale(1.03)}}
+.spot .sl .sh{position:absolute;inset:0;background:linear-gradient(180deg,#0009 0%,#0000 24%,#0000 48%,#000e 100%)}
+.spot .sl .fl{position:absolute;inset:0;background:linear-gradient(105deg,#fff0 40%,#fff6 50%,#fff0 60%);transform:translateX(-120%)}
+.spot .sl.on .fl{animation:sweep 1s .05s ease-out forwards}
+@keyframes sweep{to{transform:translateX(120%)}}
+.spot .line{position:absolute;left:20px;right:64px;bottom:9%;z-index:4;font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:clamp(34px,3.6vw,56px);line-height:.92;text-shadow:0 2px 20px #000a}
+.spot .line span{display:inline-block;opacity:0;transform:translateY(30px) rotate(4deg)}
+.spot .sl.on .line span{animation:pop .5s cubic-bezier(.2,1.4,.3,1) forwards}
+@keyframes pop{to{opacity:1;transform:none}}
+.spot .card{background:radial-gradient(120% 90% at 20% 10%,color-mix(in srgb,var(--c) 55%,#000),#050505 72%);display:flex;flex-direction:column;justify-content:center;padding:26px;overflow:hidden}
+.spot .card::before{content:"";position:absolute;inset:-20%;background:repeating-linear-gradient(100deg,#fff0 0 60px,#ffffff10 60px 62px);animation:lines 1s linear infinite}
+@keyframes lines{to{transform:translateX(62px)}}
+.spot .card .big{position:relative;font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:clamp(48px,5.4vw,84px);line-height:.88;opacity:0;transform:scale(1.3) rotate(-3deg);overflow-wrap:anywhere}
+.spot .card.on .big{animation:slam .55s .1s cubic-bezier(.2,1.3,.3,1) forwards}
+@keyframes slam{to{opacity:1;transform:none}}
+.spot .card .sm{position:relative;margin-top:14px;font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--c);font-weight:800;opacity:0}
+.spot .card.on .sm{animation:pop .5s .6s forwards}
+.spot .bar{position:absolute;z-index:5;left:14px;right:14px;top:12px;display:flex;gap:4px}
+.spot .bar s{flex:1;height:3px;background:#fff4;overflow:hidden;border-radius:2px}
+.spot .bar s u{display:block;height:100%;width:0;background:#fff}
+.spot .bar s.done u{width:100%}
+.spot .bar s.cur u{animation:fill var(--dur,4s) linear forwards}
+@keyframes fill{to{width:100%}}
+.spot .top{position:absolute;z-index:5;top:26px;left:16px;right:16px;display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800;letter-spacing:.04em}
+.spot .top .av{width:34px;height:34px;border-radius:50%;background:var(--c);color:#000;display:grid;place-items:center;font-family:var(--disp);font-weight:900;font-size:18px}
+.spot .top small{display:block;font-weight:500;color:#e2dfd7;letter-spacing:.02em;font-size:11px}
+.spot .top i{margin-left:auto;font-style:normal;font-size:10px;letter-spacing:.16em;background:#f33;border-radius:4px;padding:2px 7px}
+.spot.paused .bar s.cur u,.spot.paused .sl.on img,.spot.paused .card::before{animation-play-state:paused}
+.act-col{position:absolute;z-index:6;right:10px;bottom:8%;display:flex;flex-direction:column;gap:12px;align-items:center}
+.act-col button{width:44px;height:44px;border-radius:50%;border:0;background:#0009;backdrop-filter:blur(6px);font-size:18px;transition:transform .2s,background .2s}
+.act-col button:hover{transform:scale(1.15)}
+.act-col button.liked{background:#ff2d55}
+.act-col span{font-size:11px;font-weight:800;margin-top:-8px;text-shadow:0 1px 6px #000}
+.heart{position:absolute;z-index:7;right:22px;bottom:20%;font-size:26px;pointer-events:none;animation:fly 1.3s ease-out forwards}
+@keyframes fly{to{transform:translate(var(--dx),-240px) scale(1.8) rotate(var(--r));opacity:0}}
+
+/* pager */
+.pager{position:fixed;inset:auto 0 0 0;z-index:20;height:58px;display:flex;align-items:center;justify-content:center;gap:16px;background:linear-gradient(#08080a00,#08080af0 45%);pointer-events:none}
+.pager>*{pointer-events:auto}
+.pager button.ar{width:44px;height:44px;border-radius:50%;border:1px solid #fff4;background:#000a;font-size:17px;transition:all .2s}
+.pager button.ar:hover{background:var(--tc,var(--acc));border-color:var(--tc,var(--acc));color:#000;transform:scale(1.1)}
+.pager button.ar:disabled{opacity:.25;pointer-events:none}
+#cnt{font-family:var(--disp);font-weight:900;font-size:21px;letter-spacing:.12em;text-transform:uppercase;min-width:240px;text-align:center}
+#cnt b{color:var(--tc,var(--acc))}
+#dots{position:fixed;z-index:20;left:0;right:0;bottom:0;height:3px;background:#ffffff14}
+#dots u{display:block;height:100%;background:var(--tc,var(--acc));transition:width .6s cubic-bezier(.2,.8,.2,1),background .5s}
+
+#lb{position:fixed;inset:0;z-index:70;background:#000e;display:none;align-items:center;justify-content:center;cursor:zoom-out;padding:20px}
+#lb.on{display:flex}
+#lb img,#lb video{max-height:88vh;max-width:94vw;border-radius:8px}
+#lb figcaption{text-align:center;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-top:10px}
+
+@media(min-width:941px) and (max-height:730px){.bh h2{font-size:clamp(56px,7.4vw,104px)}.star h3{font-size:clamp(36px,3.8vw,52px)}.star p{font-size:16px}.claim{margin-bottom:12px}.st{margin-bottom:12px}.md .vis{max-width:230px}.md{grid-template-columns:230px minmax(0,1fr)}.specs{margin-top:12px}.own{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}.pn{padding-top:70px}}
+@media(max-width:940px){
+ body{font-size:16px}
+ .bl{grid-template-columns:1fr;gap:26px}.left{height:auto;width:min(100%,360px);max-height:none;min-height:0;margin:0 auto}
+ .specs{grid-template-columns:repeat(2,1fr)}.md{grid-template-columns:1fr}.md .vis{max-width:300px}
+ .wrap{padding:0 16px}nav{padding:0 12px;gap:10px}nav .logo{font-size:20px}
+ #cnt{min-width:150px;font-size:17px}.ghost{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important}.intro h1 i,.spot .line span{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<nav><button class="logo" id="home" aria-label="Úvod">GAR<b>Á</b>Ž</button><div id="tabs"></div></nav>
+
+<div class="deck" id="deck">
+  <section class="pn intro act" id="uvod">
+    <div class="bg" id="heroBg"></div><canvas id="fx"></canvas>
+    <div class="wrap in">
+      <div class="kick">Deset značek · nejlepší modely · vlastní záběry</div>
+      <h1><i>Benzín</i> <span><i style="animation-delay:.18s">v krvi</i></span></h1>
+      <p>Každá značka má vlastní obrazovku: reklamu, hlavní hvězdu, nejlepší modely a moje vlastní záběry. Vyber si:</p>
+      <div class="tiles" id="tiles"></div>
+    </div>
+  </section>
+</div>
+
+<div class="pager"><button class="ar" id="prev" aria-label="Předchozí značka">←</button><div id="cnt"></div><button class="ar" id="next" aria-label="Další značka">→</button></div>
+<div id="dots"><u></u></div>
+<div id="lb"></div>
+
+<script>
+const I=n=>'img/'+n+'.jpg';
+const B=[
+{id:'lamborghini',name:'Lamborghini',place:'Sant\'Agata Bolognese · Itálie',c:'#f5b301',claim:'Nikdo ho nepotřebuje. Každý ho chce.',
+ h:'Aventador SVJ',p:['Super Veloce Jota. Atmosférický dvanáctiválec 6,5 l, aktivní aerodynamika ALA a čas 6:44,97 na Severní smyčce. Poslední velké Lamborghini bez elektromotoru a bez turba.','Fialové SVJ 63 jsem vyfotil v dubnu 2024, černé stálo v létě 2022 před kasinem v Monaku.'],
+ specs:[['770 k','V12 6,5 l'],['2,8 s','0–100 km/h'],['6:44,97','Nordschleife'],['350+','km/h']],
+ slides:[['svj-purple-2','Dvanáct válců. Žádné turbo.'],['svj-black-1','Monako to slyší dřív, než vidí.'],[null,'STO.','Super Trofeo Omologata'],['huracan-rear34','V10. Střecha dole.'],['svj-purple-1','Každá hrana má důvod.'],['huracan-badge','Býk se neptá.']],
+ end:['Lamborghini','Sant\'Agata Bolognese'],
+ models:[
+  ['Aventador SVJ','Vrchol éry V12. Křídlo, které pracuje se vzduchem místo proti němu.',[['770 k','výkon'],['2,8 s','0–100'],['900','kusů kupé']],'svj-purple-3'],
+  ['Aventador SV','LP 750-4 SuperVeloce: o 50 kg lehčí, o 50 koní silnější, o hodně hlasitější.',[['750 k','V12 6,5 l'],['2,8 s','0–100'],['350+','km/h']]],
+  ['Huracán STO','Závodní Super Trofeo s SPZ. Zadní pohon, kapota vcelku, ploutev na zádech.',[['640 k','V10 5,2 l'],['3,0 s','0–100'],['RWD','zadní pohon']]],
+  ['Huracán Performante Spyder','Desetiválec za zády a nebe nad hlavou. V tomhle jsem se směl svézt.',[['640 k','V10 5,2 l'],['3,1 s','0–100'],['325','km/h']],'huracan-front'],
+  ['Revuelto','Nový dvanáctiválec, tři elektromotory a přes tisíc koní. Nástupce Aventadoru.',[['1 015 k','V12 hybrid'],['2,5 s','0–100'],['9 500','ot./min']]],
+  ['Urus Performante','Rodinné auto pro ty, kdo odmítají jezdit pomalu.',[['666 k','V8 4,0 biturbo'],['3,3 s','0–100'],['306','km/h']]]],
+ mine:[['svj-black-2','Aventador SVJ 63','Monako, 2022'],['huracan-rear','Huracán Performante Spyder','2025'],['huracan-side','Huracán Performante Spyder','2025'],['svj-purple-1','Aventador SVJ 63','2024']]},
+
+{id:'porsche',name:'Porsche',place:'Stuttgart-Zuffenhausen · Německo',c:'#d5001c',claim:'Jeden tvar. Šedesát let pravdy.',
+ h:'911 G Series',p:['Druhá generace 911 a ta, která vydržela nejdéle: 1973 až 1989. Poznáš ji podle nárazníků s gumovými měchy. V roce 1974 přinesla první 911 Turbo s 260 koňmi, od modelového roku 1984 Carreru 3.2 s 231 koňmi.','Bílou Carreru Cabriolet se širokou zádí jsem potkal zaparkovanou na ulici. A hned vedle ní v téhle kapitole stojí dnešní 911 GT3 RS — stejná silueta, o půl století dál.'],
+ specs:[['198 496','kusů G Series'],['260 k','první 911 Turbo'],['231 k','Carrera 3.2'],['16 let','ve výrobě']],
+ slides:[['g-front','1973. Nárazníky s měchy.'],['g-turbo','1974. Přichází Turbo.'],['g-rear','Široká záď. Velké křídlo.'],['gt3rs-front','Dnes: 9 000 otáček.'],['carrera-gt','Mezitím: V10 z Le Mans.'],['gt3rs-rear','Tvar zůstal.']],
+ end:['Porsche 911','Není co dodat']
+ ,models:[
+  ['911 G Series','Vzduchem chlazený boxer, kulatá světla, měchy na náraznících. Klasika, která neuhne.',[['1973–89','výroba'],['260 k','Turbo 3.0'],['231 k','Carrera 3.2']],'g-nose'],
+  ['911 GT3 RS','Generace 992. Křídlo vyšší než střecha a přítlak jako závodní speciál.',[['525 k','4,0 l boxer'],['3,2 s','0–100'],['860 kg','přítlak']],'gt3rs-front'],
+  ['911 GT3','Stejné atmosférické srdce, míň křídel. Pro ty, kdo řadí sami.',[['510 k','4,0 l boxer'],['9 000','ot./min'],['3,4 s','0–100']],'gt3-blue'],
+  ['911 Turbo S','Každodenní auto, které na semaforu porazí skoro cokoli.',[['650 k','3,7 l biturbo'],['2,7 s','0–100'],['330','km/h']]],
+  ['918 Spyder','Hybridní hypersport, který jako první sériové auto prolomil 7 minut na Ringu.',[['887 k','V8 + 2 e-motory'],['2,6 s','0–100'],['6:57','Nordschleife']],'p918'],
+  ['Carrera GT','Desetiválec původně určený pro Le Mans, manuál a žádná záchranná síť.',[['612 k','V10 5,7 l'],['3,9 s','0–100'],['330','km/h']],'carrera-gt'],
+  ['911 Speedster','Rozlučka generace 991. Motor z GT3, manuál, žádná střecha navíc.',[['510 k','4,0 l boxer'],['1 948','kusů'],['9 000','ot./min']],'speedster-side']],
+ mine:[['g-orange','911 Carrera','Muzeum Porsche'],['g-rear','911 Carrera Cabriolet','Na ulici'],['g-tail','911, velrybí ploutev','Muzeum Porsche'],['p356','356 „Nr. 1“ Roadster','Muzeum Porsche'],['p917-pink','917/20 „Růžové prase“','Muzeum Porsche'],['p917','917','Muzeum Porsche'],['p935','935 v barvách Martini','Muzeum Porsche'],['p919','919 Hybrid','Muzeum Porsche'],['speedster-rear','911 Speedster','Na výletě']]},
+
+{id:'bugatti',name:'Bugatti',place:'Molsheim · Francie',c:'#3f7bff',claim:'Když je rychlost řemeslo.',
+ h:'Chiron & Veyron',p:['Veyron v roce 2005 posunul hranici na 1 001 koní a přes 400 km/h. Chiron na něj navázal stejným receptem — osmilitrem W16 se čtyřmi turby — a přidal dalších pět set koní.','Oba jsem viděl vedle sebe na srazu v srpnu 2025.'],
+ specs:[['1 500 k','Chiron, W16 8,0 l'],['420','km/h (omezeno)'],['1 001 k','Veyron 16.4'],['407','km/h Veyron']],
+ slides:[['chiron-front','Podkova. Poznáš ji hned.'],['chiron-side','Šestnáct válců. Čtyři turba.'],[null,'490 km/h.','Chiron Super Sport 300+'],['veyron-front','Veyron: ten, co to začal.'],['chiron-rear','Jeden pruh světla.']],
+ end:['Bugatti','Molsheim'],
+ models:[
+  ['Chiron','Patnáct set koní podávaných s klidem luxusní limuzíny.',[['1 500 k','W16 8,0 l'],['2,4 s','0–100'],['420','km/h']],'chiron-front'],
+  ['Veyron 16.4','Auto, o kterém inženýři říkali, že postavit nejde. Šlo.',[['1 001 k','W16 8,0 l'],['2,5 s','0–100'],['407','km/h']],'veyron-front'],
+  ['Chiron Super Sport 300+','První sériový vůz, který překonal 300 mil za hodinu.',[['1 600 k','výkon'],['490,5','km/h'],['30','kusů']]],
+  ['Divo','Chiron naladěný na zatáčky. Míň rychlosti, víc přítlaku.',[['1 500 k','výkon'],['380','km/h'],['40','kusů']]],
+  ['Bolide','Jen na okruh. W16 v karoserii, která váží polovinu.',[['1 600 k','výkon'],['40','kusů'],['okruh','bez SPZ']]],
+  ['Tourbillon','Nová éra: atmosférický V16 a tři elektromotory. Budíky jako švýcarské hodinky.',[['1 800 k','V16 hybrid'],['2,0 s','0–100'],['250','kusů']]]],
+ mine:[['veyron-rear','Veyron 16.4','Sraz, 2025'],['chiron-rear','Chiron','Sraz, 2025'],['chiron-side','Chiron','Sraz, 2025']]},
+
+{id:'ferrari',name:'Ferrari',place:'Maranello · Itálie',c:'#ff2800',claim:'Červená není barva. Je to slib.',
+ h:'SF90 Stradale',p:['První sériové Ferrari s plug-in hybridem: osmiválec biturbo a tři elektromotory dávají dohromady 1 000 koní a pohon všech kol.','Červenou i žlutou SF90 jsem vyfotil během jednoho odpoledne v Monaku. Purosangue a noční Ferrari mám i na videu.'],
+ specs:[['1 000 k','V8 + 3 e-motory'],['2,5 s','0–100 km/h'],['340','km/h'],['25 km','na elektřinu']],
+ slides:[['sf90-red-front','Rosso. Samozřejmě.'],['sf90-yellow','Giallo Modena.'],['sf90-red-rear','Tisíc koní pod sklem.'],['f12','V12 vpředu. Jak má být.'],['f488-rear','Maranello umí i matnou.'],['sf90-yellow-rear','Hybrid, který křičí.']],
+ end:['Ferrari','Maranello'],
+ models:[
+  ['SF90 Stradale','Tisíc koní a pohon všech kol. Nejrychlejší silniční Ferrari své doby.',[['1 000 k','hybrid V8'],['2,5 s','0–100'],['340','km/h']],'sf90-red-front'],
+  ['LaFerrari','Dvanáctiválec s technikou KERS z Formule 1. Jedno ze svaté trojice.',[['963 k','V12 hybrid'],['2,9 s','0–100'],['499','kusů kupé']]],
+  ['F40','Poslední auto, které schválil Enzo. Kevlar, dvě turba, žádné koberečky.',[['478 k','V8 biturbo'],['324','km/h'],['1987','rok']]],
+  ['812 Competizione','Atmosférický V12, který točí devět a půl tisíce.',[['830 k','V12 6,5 l'],['2,85 s','0–100'],['9 500','ot./min']]],
+  ['F12berlinetta','Gran turismo s motorem vpředu a výkonem supersportu.',[['740 k','V12 6,3 l'],['3,1 s','0–100'],['340','km/h']],'f12'],
+  ['Purosangue','Čtyři dveře, čtyři sedadla a pořád dvanáct válců.',[['725 k','V12 6,5 l'],['3,3 s','0–100'],['310','km/h']],'@purosangue'],
+  ['F80','Nástupce LaFerrari. Šestiválec z Le Mans a 1 200 koní.',[['1 200 k','V6 hybrid'],['2,15 s','0–100'],['799','kusů']]]],
+ mine:[['f488','Ferrari 488 Spider','Monako, 2022'],['sf90-yellow-rear','SF90','Monako, 2022'],['sf90-yellow','SF90','Monako, 2022']],
+ clips:[['purosangue','Ferrari Purosangue'],['ferrari-noc','Ferrari v noci']]},
+
+{id:'koenigsegg',name:'Koenigsegg',place:'Ängelholm · Švédsko',c:'#19d3c5',claim:'Malá továrna. Velké rekordy.',
+ h:'Jesko',p:['Manufaktura na bývalé letecké základně, která si sama staví motory i převodovky. Jesko má pětilitrový osmiválec biturbo a devítistupňovou Light Speed Transmission se sedmi spojkami.','Koenigsegg jsem naživo ještě nevyfotil, takže tahle kapitola je celá animovaná. Až nějaký potkám, fotky doplním.'],
+ specs:[['1 600 k','na palivo E85'],['5,0 l','V8 biturbo'],['9 st.','převodovka LST'],['125','kusů']],
+ slides:[[null,'Ängelholm.','Bývalá letecká základna'],[null,'1 600 koní.','Na E85'],[null,'447 km/h.','Agera RS, rekord 2017'],[null,'1 : 1.','Kůň na kilogram'],[null,'Duch na kapotě.','Znak stíhací letky']],
+ end:['Koenigsegg','Švédská odpověď'],
+ models:[
+  ['Jesko','Okruhová zbraň pojmenovaná po otci zakladatele.',[['1 600 k','V8 5,0 biturbo'],['9 st.','LST'],['125','kusů']]],
+  ['Jesko Absolut','Stejný motor, míň křídel. Postavený na nejvyšší rychlost.',[['1 600 k','výkon'],['0,278','Cd'],['500+','km/h cíl']]],
+  ['Agera RS','V roce 2017 nejrychlejší sériové auto světa.',[['1 360 k','s paketem 1MW'],['447,2','km/h rekord'],['25','kusů']]],
+  ['One:1','První megacar: megawatt výkonu a kůň na každý kilogram.',[['1 360 k','výkon'],['1 360 kg','hmotnost'],['7','kusů']]],
+  ['Regera','Hybrid bez klasické převodovky. Jeden převod z nuly do čtyř set.',[['1 500 k','V8 + 3 e-motory'],['Direct Drive','bez řazení'],['80','kusů']]],
+  ['Gemera','Čtyři plnohodnotná místa a výkon, který nedává smysl.',[['2 300 k','verze V8'],['4','místa'],['300','kusů']]]],
+ mine:[]},
+
+{id:'bmw',name:'BMW M',place:'Mnichov · Německo',c:'#2e8bff',claim:'Nejsilnější písmeno na světě.',
+ h:'M4',p:['Řadový šestiválec, zadní kola a kupé, které umí jet do práce i bokem. Žlutou M4 generace F82 jsem vyfotil večer na parkovišti — a směl jsem se v ní svézt.','V BMW Museu a BMW Weltu v Mnichově jsem pak nafotil všechno od M1 po nejnovější M2.'],
+ specs:[['431 k','M4 F82, 3,0 l biturbo'],['4,1 s','0–100 km/h (DKG)'],['550 Nm','točivý moment'],['RWD','zadní pohon']],
+ slides:[['m4-front','Austin Yellow.'],['bmw-m4-new','Ledvinky, které nepřehlédneš.'],['bmw-e30','1986. Začátek legendy.'],['bmw-m1','M1. První svého jména.'],['bmw-csl','3.0 CSL. Batmobil.'],['m4-rear','Čtyři koncovky. Šest válců.']],
+ end:['BMW M','Mnichov'],
+ models:[
+  ['M4 (F82)','První M4. Dvě turba, karbonová střecha, zadní pohon.',[['431 k','3,0 l biturbo'],['4,1 s','0–100'],['550 Nm','moment']],'m4-rear'],
+  ['M4 Competition','Generace G82. Víc výkonu, víc gripu, víc ledvinek.',[['510 k','3,0 l biturbo'],['3,9 s','0–100'],['650 Nm','moment']],'bmw-m4-new'],
+  ['M4 CSL','Sto kilo dole, zadní sedadla pryč. Nejrychlejší sériové BMW na Ringu své doby.',[['550 k','výkon'],['3,7 s','0–100'],['1 000','kusů']]],
+  ['M5 CS','Sedan pro čtyři, který zrychluje jako supersport.',[['635 k','V8 4,4 biturbo'],['3,0 s','0–100'],['305','km/h']]],
+  ['M2','Nejmenší M s největším úsměvem. Dá se koupit i s manuálem.',[['460 k','3,0 l biturbo'],['4,1 s','0–100'],['RWD','zadní pohon']],'bmw-m2'],
+  ['M3 (E30)','Homologační speciál, který vyhrál skoro všechno, do čeho nastoupil.',[['200 k','čtyřválec 2,3 l'],['1986','rok'],['DTM','šampion']],'bmw-e30-rear'],
+  ['M1','Jediný supersport s motorem uprostřed, který BMW kdy vyrobilo sériově.',[['277 k','šestiválec 3,5 l'],['262','km/h'],['1978–81','výroba']],'bmw-m1']],
+ mine:[['bmw-507','BMW 507 Elvise Presleyho','BMW Museum'],['bmw-csl','BMW 3.0 CSL','BMW Museum'],['bmw-m4-blue','BMW M4 Cabrio','BMW Welt'],['m4-day','BMW M4 (F82)','Na ulici'],['bmw-e30','BMW M3 (E30)','BMW Museum']],
+ clips:[['m3-miami','BMW M3 pod palmami']]},
+
+{id:'mercedes',name:'Mercedes-AMG',place:'Affalterbach & Stuttgart · Německo',c:'#00d2be',claim:'Jeden člověk. Jeden motor.',
+ h:'AMG ONE',p:['Motor z vozu Formule 1 v autě s SPZ: přeplňovaný šestiválec 1,6 l, čtyři elektromotory a 11 000 otáček. Trvalo roky, než ho v Affalterbachu naučili volnoběh.','AMG ONE, 300 SL i Uhlenhautovo kupé jsem fotil v muzeu Mercedes-Benz ve Stuttgartu.'],
+ specs:[['1 063 k','V6 1,6 l + 4 e-motory'],['2,9 s','0–100 km/h'],['352','km/h'],['275','kusů']],
+ slides:[['amg-one','Formule 1 s poznávací značkou.'],['amg-one-rear','Ploutev. Jako na okruhu.'],['sl300','1954. Křídla racka.'],['slr','300 SLR. Jen dva kusy.'],['amg-gt-concept','AMG. Ruční práce.'],['g-class','A když dojde asfalt: G.']],
+ end:['Mercedes-AMG','Affalterbach'],
+ models:[
+  ['AMG ONE','Pohonná jednotka šampionů F1 na silnici.',[['1 063 k','hybrid V6'],['11 000','ot./min'],['275','kusů']],'amg-one'],
+  ['AMG GT Black Series','Osmiválec s plochou klikou a aerodynamika z GT3.',[['730 k','V8 4,0 biturbo'],['3,2 s','0–100'],['6:43,6','Nordschleife']]],
+  ['SLS AMG','Návrat křídlových dveří a jeden z posledních velkých atmosférických V8.',[['571 k','V8 6,2 l'],['3,8 s','0–100'],['317','km/h']]],
+  ['G 63','Krabice, která zrychluje jako sportovní kupé.',[['585 k','V8 4,0 biturbo'],['4,5 s','0–100'],['3','uzávěrky diferenciálu']]],
+  ['300 SL','Gullwing. První sériové auto se vstřikováním benzínu.',[['215 k','šestiválec 3,0 l'],['260','km/h'],['1954','rok']],'sl300'],
+  ['300 SLR Uhlenhaut Coupé','Závodní vůz se střechou. Jeden z nich je nejdražší auto historie.',[['302 k','osmiválec 3,0 l'],['2','kusy'],['1955','rok']],'slr'],
+  ['SL 55 AMG','Kompresorový osmiválec a skládací střecha. Ikona nultých let.',[['500 k','V8 5,4 l kompresor'],['4,5 s','0–100'],['R230','generace']],'sl55']],
+ mine:[['amg-one-rear','Mercedes-AMG ONE','Muzeum Mercedes-Benz'],['amg-gt-concept','Koncept AMG GT','Muzeum Mercedes-Benz'],['g-class','Třída G','Muzeum Mercedes-Benz']]},
+
+{id:'audi',name:'Audi Sport',place:'Ingolstadt & Neckarsulm · Německo',c:'#e2001a',claim:'Rodinné auto. Jen o něco rychlejší.',
+ h:'RS 6 Avant',p:['Kombi, které odveze rodinu, psa i lyže — a cestou předjede sporťák. Osmiválec biturbo, quattro a blatníky širší než u čehokoli v okolí.','Šedou RS 6 jsem vyfotil na parkovišti, zelenou RS 5 u pumpy. Sport quattro, RS 4 a stříbrný šíp Auto Union stojí v Audi Foru v Ingolstadtu.'],
+ specs:[['630 k','RS 6 Avant performance'],['3,4 s','0–100 km/h'],['V8','4,0 l biturbo'],['quattro','pohon všech kol']],
+ slides:[['rs6-front','Kombi. Šest set koní.'],['rs6-side','Blatníky mluví za vše.'],['rs5','RS 5. Zelená mamba.'],['sport-quattro','1984. Tady quattro začalo.'],['hoonitron','A takhle vypadá budoucnost.'],['audi-green','RS 3. Pět válců.']],
+ end:['Audi Sport','Čtyři kruhy'],
+ models:[
+  ['RS 6 Avant','Nejžádanější kombi světa. Od roku 2002 pořád stejná myšlenka.',[['630 k','V8 4,0 biturbo'],['3,4 s','0–100'],['305','km/h']],'rs6-front'],
+  ['RS 7 Sportback','Stejná technika v karoserii kupé. Pro ty, kdo nevozí kufry.',[['630 k','V8 4,0 biturbo'],['3,4 s','0–100'],['305','km/h']]],
+  ['RS Q8','Nejsilnější spalovací Audi a rekordman mezi SUV na Ringu.',[['640 k','performance'],['3,6 s','0–100'],['7:36,7','Nordschleife']]],
+  ['R8 V10','Atmosférický desetiválec za zády. Dnes už se nevyrábí — o to víc chybí.',[['620 k','V10 5,2 l'],['3,1 s','0–100'],['331','km/h']]],
+  ['RS 5','Kupé s šestiválcem biturbo a trvalou čtyřkolkou.',[['450 k','V6 2,9 biturbo'],['3,9 s','0–100'],['600 Nm','moment']],'rs5'],
+  ['RS 3','Pětiválec, který zní jako rallye speciál.',[['400 k','pětiválec 2,5 l'],['3,8 s','0–100'],['1-2-4-5-3','pořadí zapalování']],'audi-green'],
+  ['Sport quattro','Zkrácený homologační speciál skupiny B.',[['306 k','pětiválec turbo'],['214','kusů'],['1984','rok']],'sport-quattro']],
+ mine:[['auto-union','Auto Union, stříbrný šíp','Audi Forum'],['rs4','Audi RS 4','Audi Forum'],['audi-dtm','Audi DTM','Audi Forum'],['hoonitron','Audi S1 Hoonitron','Audi Forum'],['rs6-side','RS 6 Avant','Na ulici']]},
+{id:'mclaren',name:'McLaren',place:'Woking · Velká Británie',c:'#ff8000',claim:'Postaveno lidmi od Formule 1.',
+ h:'765LT',p:['Longtail: delší záď, o 80 kg míň než 720S a osmiválec biturbo naladěný na 765 koní. Čtyři titanové koncovky vyvedené nahoru patří k nejhlasitějším podpisům ve Wokingu.','Tenhle duhově polepený kus jsem vyfotil v červnu 2025 na parkovišti hned vedle oranžového Huracánu.'],
+ specs:[['765 k','V8 4,0 l biturbo'],['2,8 s','0–100 km/h'],['330','km/h'],['765','kusů kupé']],
+ slides:[['mclaren-front','Longtail.'],['mclaren-rear','Čtyři koncovky. Titan.'],[null,'386 km/h.','McLaren F1, 1998'],['mclaren-34','Karbonová vana.'],[null,'Woking.','Sídlo týmu F1']],
+ end:['McLaren','Woking'],
+ models:[
+  ['765LT','Lehčí, hlasitější a ostřejší 720S. Longtail se vším všudy.',[['765 k','V8 biturbo'],['2,8 s','0–100'],['330','km/h']],'mclaren-34'],
+  ['720S','Supersport, který změnil měřítka své třídy.',[['720 k','V8 4,0 biturbo'],['2,9 s','0–100'],['341','km/h']]],
+  ['P1','Hybridní hypersport ze svaté trojice.',[['916 k','V8 hybrid'],['2,8 s','0–100'],['375','kusů']]],
+  ['Senna','Okruhové auto s SPZ pojmenované po legendě.',[['800 k','V8 biturbo'],['800 kg','přítlak'],['500','kusů']]],
+  ['Speedtail','Tři sedadla, řidič uprostřed a přes 400 km/h.',[['1 070 k','hybrid'],['403','km/h'],['106','kusů']]],
+  ['F1','Motor V12 od BMW, zlato v motorovém prostoru a rekord z roku 1998.',[['627 k','V12 6,1 l'],['386,4','km/h'],['106','kusů']]],
+  ['W1','Nástupce F1 a P1. Nejsilnější McLaren historie.',[['1 275 k','V8 hybrid'],['2,7 s','0–100'],['399','kusů']]]],
+ mine:[['mclaren-front','McLaren 765LT','Na parkovišti, 2025'],['mclaren-rear','McLaren 765LT','Na parkovišti, 2025']]},
+
+{id:'aston-martin',name:'Aston Martin',place:'Gaydon · Velká Británie',c:'#12b08f',claim:'Gentleman, který umí zařvat.',
+ h:'Vanquish',p:['Britské gran turismo s atmosférickým dvanáctiválcem vpředu a karbonovou karoserií. Auto, které nepotřebuje křičet, aby si ho všichni všimli.','Oranžový Vanquish jsem vyfotil v létě 2022 před kasinem v Monaku, šedé DBX o tři roky později na ulici.'],
+ specs:[['573 k','V12 5,9 l'],['4,1 s','0–100 km/h'],['295','km/h'],['2012','rok uvedení']],
+ slides:[['aston-vanquish','Dvanáct válců. Vpředu.'],[null,'DB5. 1963.','Nejslavnější auto filmového plátna'],['aston-vanquish-2','Monako mu sluší.'],[null,'11 100 ot./min.','Valkyrie'],['aston-dbx','DBX. Gentleman v teréňáku.']],
+ end:['Aston Martin','Gaydon'],
+ models:[
+  ['Vanquish','Vlajková loď s karbonovou karoserií a V12 bez turba.',[['573 k','V12 5,9 l'],['4,1 s','0–100'],['295','km/h']],'aston-vanquish-2'],
+  ['Valkyrie','Formule pro silnici. Atmosférický V12 od Cosworthu.',[['1 155 k','V12 hybrid'],['11 100','ot./min'],['150','kusů']]],
+  ['DBS Superleggera','Brutální GT s dvanáctiválcem biturbo.',[['725 k','V12 5,2 biturbo'],['3,4 s','0–100'],['340','km/h']]],
+  ['Valhalla','První sériový Aston s motorem uprostřed.',[['1 079 k','V8 hybrid'],['2,5 s','0–100'],['999','kusů']]],
+  ['One-77','Sedmdesát sedm kusů a největší atmosférický motor své doby.',[['760 k','V12 7,3 l'],['354','km/h'],['77','kusů']]],
+  ['Vantage','Nejmenší Aston s největším temperamentem.',[['665 k','V8 4,0 biturbo'],['3,5 s','0–100'],['325','km/h']]],
+  ['DBX707','SUV, které zrychluje jako supersport.',[['707 k','V8 4,0 biturbo'],['3,3 s','0–100'],['310','km/h']]],
+  ['DB5','Ikona šedesátých let. Stříbrná, samozřejmě.',[['286 k','šestiválec 4,0 l'],['233','km/h'],['1963','rok']]]],
+ mine:[['aston-vanquish','Aston Martin Vanquish','Monako, 2022'],['aston-dbx','Aston Martin DBX','Na ulici, 2025']]}
+];
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+const DUR=3400,CYC=6000,lb=document.getElementById('lb'),deck=document.getElementById('deck');
+function mkVid(f){const v=document.createElement('video');v.muted=true;v.loop=true;v.playsInline=true;v.preload='none';v.poster='vid/'+f+'.jpg';v.src='vid/'+f+'.mp4';return v}
+function zoom(node,cap){lb.innerHTML='';const fg=el('figure');fg.style.margin=0;fg.append(node);if(cap)fg.append(el('figcaption','',cap));lb.append(fg);lb.classList.add('on')}
+const zimg=(f,cap)=>{const im=new Image();im.src=I(f);im.alt=cap||'';zoom(im,cap)};
+const zvid=(f,cap)=>{const v=mkVid(f);v.controls=true;v.preload='auto';zoom(v,cap);v.play().catch(()=>{})};
+lb.onclick=e=>{if(e.target.tagName!=='VIDEO'){lb.classList.remove('on');lb.innerHTML=''}};
+const short=b=>b.name.replace('Mercedes-AMG','Mercedes').replace(/ M$/,'').replace(' Sport','');
+const words=t=>t.split(' ').map((w,i)=>'<span style="animation-delay:'+(.15+i*.09)+'s">'+w+'</span>').join(' ');
+function countUp(node){const t=node.dataset.v,m=t.match(/^(\d[\d ]*)( .*)?$/);if(!m||matchMedia('(prefers-reduced-motion:reduce)').matches){node.textContent=t;return}
+  const n=+m[1].replace(/ /g,''),suf=m[2]||'',t0=performance.now();(function f(now){const k=Math.min(1,(now-t0)/900),e=1-Math.pow(1-k,3);node.textContent=Math.round(n*e).toLocaleString('cs-CZ').replace(/ /g,' ')+suf;if(k<1)requestAnimationFrame(f);else node.textContent=t})(t0)}
+const cu=root=>root.querySelectorAll('[data-v]').forEach(countUp);
+
+function buildSpot(b){
+  const s=el('div','spot');s.style.setProperty('--dur',DUR+'ms');const slides=[];
+  b.slides.forEach(([img,line,sm])=>{let d;
+    if(img){d=el('div','sl');const im=new Image();im.loading='lazy';im.src=I(img);im.alt=b.name+' — '+line;d.append(im,el('div','sh'),el('div','fl'),el('div','line',words(line)));}
+    else d=el('div','sl card','<div class="big">'+line+'</div><div class="sm">'+(sm||'')+'</div>');
+    s.append(d);slides.push(d)});
+  const e=el('div','sl card','<div class="big">'+b.end[0]+'</div><div class="sm">'+b.end[1]+'</div>');s.append(e);slides.push(e);
+  const bar=el('div','bar');slides.forEach(()=>bar.append(el('s','','<u></u>')));s.append(bar);
+  s.append(el('div','top','<div class="av">'+b.name[0]+'</div><div>'+short(b)+'<small>'+b.place.split(' · ')[0]+'</small></div><i>REKLAMA</i>'));
+  const col=el('div','act-col'),like=el('button','','♥'),pp=el('button','','❚❚'),lc=el('span','','0');
+  like.setAttribute('aria-label','To se mi líbí');pp.setAttribute('aria-label','Pozastavit nebo přehrát');col.append(like,lc,pp);s.append(col);
+  let likes=0;like.onclick=()=>{likes++;lc.textContent=likes;like.classList.add('liked');for(let k=0;k<6;k++){const h=el('div','heart','♥');h.style.color=k%2?'#ff2d55':b.c;h.style.setProperty('--dx',(Math.random()*120-90)+'px');h.style.setProperty('--r',(Math.random()*80-40)+'deg');h.style.animationDelay=k*70+'ms';s.append(h);setTimeout(()=>h.remove(),1600)}};
+  let i=-1,t=null,user=false;
+  const show=k=>{i=(k+slides.length)%slides.length;slides.forEach((x,j)=>x.classList.toggle('on',j===i));[...bar.children].forEach((x,j)=>{x.className=j<i?'done':j===i?'cur':'';if(j===i){const u=x.firstChild;u.style.animation='none';u.offsetWidth;u.style.animation=''}})};
+  const run=()=>{clearInterval(t);s.classList.remove('paused');pp.textContent='❚❚';t=setInterval(()=>show(i+1),DUR)};
+  const pause=()=>{clearInterval(t);t=null;s.classList.add('paused');pp.textContent='▶'};
+  pp.onclick=()=>{if(t){user=true;pause()}else{user=false;run()}};
+  s.addEventListener('click',e=>{if(e.target.closest('.act-col'))return;const r=s.getBoundingClientRect();show(i+((e.clientX-r.left)<r.width*.3?-1:1));if(t)run()});
+  new IntersectionObserver(([en])=>{if(en.isIntersecting&&!user){show(0);run()}else if(!en.isIntersecting)pause()},{threshold:.5}).observe(s);
+  show(0);pause();return s;
+}
+
+function modelView(b,host){
+  const chips=el('div','chips'),md=el('div','md');chips.style.setProperty('--cyc',CYC+'ms');let cur=-1,timer=null;
+  const draw=k=>{cur=(k+b.models.length)%b.models.length;const [name,tag,sp,img]=b.models[cur];
+    [...chips.children].forEach((c,j)=>{c.classList.toggle('on',j===cur)});
+    const vis=el('div','vis');
+    if(img&&img[0]==='@'){const v=mkVid(img.slice(1));v.autoplay=true;v.preload='auto';vis.append(v,el('div','badge','Natočil jsem já'));v.onclick=()=>zvid(img.slice(1),b.name+' '+name+' · vlastní video');v.play().catch(()=>{})}
+    else if(img){const im=new Image();im.src=I(img);im.alt=b.name+' '+name;im.onclick=()=>zimg(img,b.name+' '+name+' · vyfotil jsem já');vis.append(im,el('div','badge','Vyfotil jsem já'))}
+    else{const m=sp[0][0].match(/^(\d[\d ]*) k$/),n=m?+m[1].replace(/ /g,''):0,r=44,C=2*Math.PI*r*.75,f=n?Math.min(1,n/2000):1;
+      const g=el('div','gauge','<svg viewBox="0 0 100 100"><circle class="tr" cx="50" cy="50" r="'+r+'" stroke-dasharray="'+C+' 999"/><circle class="ar" cx="50" cy="50" r="'+r+'" stroke-dasharray="'+C+' 999" stroke-dashoffset="'+C+'"/></svg><div class="v"><b data-v="'+(n?m[1]:sp[0][0])+'">'+(n?'0':sp[0][0])+'</b><span>'+(n?'koní':sp[0][1])+'</span></div>');
+      vis.append(g);requestAnimationFrame(()=>requestAnimationFrame(()=>{g.querySelector('.ar').style.strokeDashoffset=C*(1-f)}))}
+    const tx=el('div','','<div class="kick">'+short(b)+' · '+String(cur+1).padStart(2,'0')+' / '+String(b.models.length).padStart(2,'0')+'</div><h4>'+name+'</h4><div class="tg">'+tag+'</div><dl>'+sp.map(([v,l])=>'<div><dt data-v="'+v+'">'+v+'</dt><dd>'+l+'</dd></div>').join('')+'</dl>');
+    md.innerHTML='';md.append(vis,tx);md.style.animation='none';md.offsetWidth;md.style.animation='tabin .45s cubic-bezier(.2,.8,.2,1)';cu(md)};
+  b.models.forEach(([name,,,img],k)=>{const c=el('button','',name+(img?'<span class="cam">📷</span>':''));c.onclick=()=>{draw(k);start()};chips.append(c)});
+  const start=()=>{clearInterval(timer);timer=setInterval(()=>{if(!chips.classList.contains('hold'))draw(cur+1)},CYC)};
+  const stop=()=>{clearInterval(timer);timer=null};
+  [chips,md].forEach(x=>{x.addEventListener('mouseenter',()=>chips.classList.add('hold'));x.addEventListener('mouseleave',()=>chips.classList.remove('hold'))});
+  host.append(chips,md);return {start:()=>{draw(cur<0?0:cur);start()},stop};
+}
+
+const tabs=document.getElementById('tabs'),tiles=document.getElementById('tiles'),P=[document.getElementById('uvod')],H=[null];
+B.forEach((b,k)=>{
+  const tb=el('button','',short(b));tb.onclick=()=>go(k+1);tabs.append(tb);
+  const tl=el('button','',short(b));tl.style.setProperty('--c',b.c);tl.onclick=()=>go(k+1);tiles.append(tl);
+  const sec=el('section','pn');sec.id=b.id;sec.style.setProperty('--c',b.c);
+  const gt=(b.name+' · ').repeat(6);sec.append(el('div','ghost',gt+gt));
+  const w=el('div','wrap'),bl=el('div','bl'),L=el('div','left'),R=el('div');
+  L.append(buildSpot(b));
+  R.append(el('div','bh','<div class="kick">'+String(k+1).padStart(2,'0')+' · '+b.place+'</div><h2>'+b.name+'</h2>'),el('div','claim',b.claim));
+  const nOwn=b.mine.length+(b.clips||[]).length,st=el('div','st');
+  const T={star:el('div','tab star'),mod:el('div','tab'),own:el('div','tab')};
+  [['star','Hlavní hvězda',''],['mod','Nejlepší modely',b.models.length],['own','Vyfotil jsem já',nOwn]].forEach(([id,lab,n])=>{const x=el('button','',lab+(n!==''?'<sup>'+n+'</sup>':''));x.dataset.t=id;st.append(x)});
+  T.star.append(el('h3','',b.h));b.p.forEach(p=>T.star.append(el('p','',p)));
+  T.star.append(el('div','specs',b.specs.map(([v,l])=>'<div><b data-v="'+v+'">'+v+'</b><span>'+l+'</span></div>').join('')));
+  const mv=modelView(b,T.mod);
+  if(nOwn){const ow=el('div','own');
+    (b.clips||[]).forEach(([f,t])=>{const fg=el('figure','v');const v=mkVid(f);fg.append(v,el('figcaption','',t+'<small>Vlastní video</small>'));fg.onclick=()=>zvid(f,t+' · vlastní video');new IntersectionObserver(([en])=>{en.isIntersecting?v.play().catch(()=>{}):v.pause()},{threshold:.5}).observe(fg);ow.append(fg)});
+    b.mine.forEach(([f,t,wh])=>{const fg=el('figure');const im=new Image();im.loading='lazy';im.src=I(f);im.alt=t;fg.append(im,el('figcaption','',t+'<small>'+wh+'</small>'));fg.onclick=()=>zimg(f,t+' · '+wh);ow.append(fg)});
+    T.own.append(ow)}
+  else T.own.append(el('div','none','Tuhle značku jsem naživo ještě nevyfotil. Až ji potkám, bude tady.'));
+  const pick=id=>{[...st.children].forEach(x=>x.classList.toggle('on',x.dataset.t===id));Object.entries(T).forEach(([n,x])=>x.classList.toggle('on',n===id));if(id==='mod')mv.start();else mv.stop();if(id==='star')cu(T.star)};
+  st.onclick=e=>{const x=e.target.closest('button');if(x)pick(x.dataset.t)};
+  R.append(st,T.star,T.mod,T.own);bl.append(L,R);w.append(bl);sec.append(w);deck.append(sec);P.push(sec);
+  H.push({enter:()=>pick('star'),leave:()=>mv.stop()});pick('star');mv.stop()});
+
+/* paging */
+let cur=-1,lock=false;const cnt=document.getElementById('cnt'),prev=document.getElementById('prev'),next=document.getElementById('next'),dots=document.querySelector('#dots u');
+function go(i){i=Math.max(0,Math.min(P.length-1,i));deck.scrollTo({left:i*deck.clientWidth,behavior:'smooth'})}
+function mark(i){if(i===cur)return;if(H[cur])H[cur].leave();cur=i;if(H[i])H[i].enter();
+  P.forEach((p,j)=>p.classList.toggle('act',j===i));
+  [...tabs.children].forEach((t,j)=>{t.classList.toggle('on',j===i-1);if(j===i-1)t.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'})});
+  document.body.style.setProperty('--tc',i?B[i-1].c:'#ff5a1f');
+  cnt.innerHTML='<b>'+String(i).padStart(2,'0')+'</b> / '+String(P.length-1).padStart(2,'0')+' · '+(i?short(B[i-1]):'Úvod');
+  dots.style.width=(i/(P.length-1)*100)+'%';prev.disabled=i===0;next.disabled=i===P.length-1;
+  try{history.replaceState(null,'','#'+P[i].id)}catch(e){}}
+deck.addEventListener('scroll',()=>{const i=Math.round(deck.scrollLeft/deck.clientWidth);if(i!==cur)mark(i)},{passive:true});
+prev.onclick=()=>go(cur-1);next.onclick=()=>go(cur+1);document.getElementById('home').onclick=()=>go(0);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){lb.classList.remove('on');lb.innerHTML=''}else if(e.key==='ArrowRight'||e.key==='PageDown')go(cur+1);else if(e.key==='ArrowLeft'||e.key==='PageUp')go(cur-1)});
+deck.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)<=Math.abs(e.deltaX))return;const p=P[cur],can=p.scrollHeight>p.clientHeight+4,top=p.scrollTop<=0,bot=p.scrollTop+p.clientHeight>=p.scrollHeight-2;
+  if(!can||(e.deltaY>0&&bot)||(e.deltaY<0&&top)){e.preventDefault();if(!lock&&Math.abs(e.deltaY)>12){lock=true;go(cur+(e.deltaY>0?1:-1));setTimeout(()=>lock=false,850)}}},{passive:false});
+addEventListener('resize',()=>deck.scrollTo({left:cur*deck.clientWidth}));
+const h0=P.findIndex(p=>'#'+p.id===location.hash);mark(0);if(h0>0)requestAnimationFrame(()=>{deck.scrollTo({left:h0*deck.clientWidth});mark(h0)});
+
+const hb=document.getElementById('heroBg'),HERO=['svj-purple-2','sf90-red-front','g-orange','amg-one','slr'];
+const hi=HERO.map((f,k)=>{const im=new Image();im.src=I(f);im.alt='';if(k===0)im.className='on';hb.append(im);return im});
+let hk=0;setInterval(()=>{if(cur)return;hi[hk].classList.remove('on');hk=(hk+1)%hi.length;hi[hk].classList.add('on')},5200);
+(()=>{const c=document.getElementById('fx'),x=c.getContext('2d');if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+ let W,Hh,S=[];const rs=()=>{W=c.width=c.offsetWidth;Hh=c.height=c.offsetHeight};rs();addEventListener('resize',rs);
+ const mk=()=>({x:Math.random()*W*1.4,y:Math.random()*Hh,l:60+Math.random()*260,v:8+Math.random()*26,a:.05+Math.random()*.25,o:Math.random()<.18});
+ for(let i=0;i<70;i++)S.push(mk());
+ (function loop(){requestAnimationFrame(loop);if(cur)return;x.clearRect(0,0,W,Hh);S.forEach(p=>{p.x-=p.v;if(p.x+p.l<0){Object.assign(p,mk());p.x=W+Math.random()*200}
+   const g=x.createLinearGradient(p.x,0,p.x+p.l,0),col=p.o?'255,90,31':'255,255,255';g.addColorStop(0,'rgba('+col+','+p.a+')');g.addColorStop(1,'rgba('+col+',0)');
+   x.strokeStyle=g;x.lineWidth=p.o?2:1;x.beginPath();x.moveTo(p.x,p.y);x.lineTo(p.x+p.l,p.y-p.l*.05);x.stroke()})})();
+})();
+</script>
+</body>
+</html>
