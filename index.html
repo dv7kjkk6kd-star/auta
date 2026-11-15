@@ -209,6 +209,10 @@ nav .logo b{color:var(--tc,var(--acc));transition:color .5s}
 
 <script>
 const I=n=>'img/'+n+'.jpg';
+/* kdyby soubory na serveru ležely jinde než ve složkách img/ a vid/, zkusí stránka další umístění */
+document.addEventListener('error',e=>{const t=e.target;if(!t||!/^(IMG|VIDEO)$/.test(t.tagName))return;const cur=t.getAttribute('src')||'';if(!cur)return;
+  const k=+(t.dataset.try||0),file=cur.split('/').pop(),dir=/\.mp4$/.test(file)||t.tagName==='VIDEO'?'vid':'img',alts=[file,'garaz/'+dir+'/'+file,'web/'+dir+'/'+file,'garaz/'+file];
+  if(k<alts.length){t.dataset.try=k+1;t.src=alts[k];if(t.tagName==='VIDEO'&&t.poster){const pf=t.poster.split('/').pop();t.poster=alts[k].replace(file,pf)}}},true);
 const B=[
 {id:'lamborghini',name:'Lamborghini',place:'Sant\'Agata Bolognese · Itálie',c:'#f5b301',claim:'Nikdo ho nepotřebuje. Každý ho chce.',
  h:'Aventador SVJ',p:['Super Veloce Jota. Atmosférický dvanáctiválec 6,5 l, aktivní aerodynamika ALA a čas 6:44,97 na Severní smyčce. Poslední velké Lamborghini bez elektromotoru a bez turba.','Fialové SVJ 63 jsem vyfotil v dubnu 2024, černé stálo v létě 2022 před kasinem v Monaku.'],
